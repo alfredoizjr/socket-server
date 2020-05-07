@@ -7,17 +7,18 @@ import { User } from '../class/user';
 
 export const usersConnected = new UsersList();
 
-export const connectingUser = (client: Socket) => {
-    
+export const connectingUser = (client: Socket, io: SocketIO.Server) => {
+
     const user = new User(client.id);
     usersConnected.addUser(user);
 
 }
 
-export const disconnect = (client: Socket) => {
+export const disconnect = (client: Socket, io: SocketIO.Server) => {
 
     client.on('disconnect', () => {
         usersConnected.removeUser(client.id);
+        io.emit('active-users', usersConnected.getList())
     });
 }
 
@@ -34,14 +35,24 @@ export const message = (client: Socket, io: SocketIO.Server) => {
 
 export const setUsers = (client: Socket, io: SocketIO.Server) => {
 
-    client.on('set-user', (payload: { name: string}, callback:Function) => {
-       
-        usersConnected.updateName(client.id,payload.name);
+    client.on('set-user', (payload: { name: string }, callback: Function) => {
+
+        usersConnected.updateName(client.id, payload.name);
+
+        io.emit('active-users', usersConnected.getList());
 
         callback({
             status: true,
             message: `User ${payload.name} is ready`
         })
     });
+}
 
+// get users
+
+export const getUsers = (client: Socket, io: SocketIO.Server) => {
+
+    client.on('get-users', () => {
+        io.emit('active-users', usersConnected.getList());
+    });
 }

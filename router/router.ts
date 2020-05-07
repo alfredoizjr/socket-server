@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Server from '../class/server';
+import { usersConnected } from '../sockets/sockets';
 
 const router = Router();
 const server = Server.instance;
@@ -39,6 +40,37 @@ router.post('/message/:id', (req: Request, res: Response) => {
     server.io.in(id).emit('new-message-private', payload)
 
     res.json({ status: true, message: 'All is ok in post', id, body, from })
+
+});
+
+// get list of client ids are connected
+router.get('/users', (req: Request, res: Response) => {
+
+    server.io.clients((err:any, clients: string[]) => {
+        if(err) {
+           return res.json({
+                status: false,
+                err
+            })
+        }
+
+        res.json({
+            status: true,
+            clients
+        });
+    });
+
+});
+
+
+// get users list are connected
+
+router.get('/users/details', (req: Request, res: Response) => {
+
+    res.json({
+        status: true,
+        users: usersConnected.getList()
+    });
 
 });
 

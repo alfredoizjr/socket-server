@@ -32,13 +32,15 @@ export default  class Server {
         this.io.on('connect',(client:Socket) => {
            
             // connecting user
-            socket.connectingUser(client);
+            socket.connectingUser(client, this.io);
             // get user
             socket.setUsers(client, this.io);
+            // get user actives
+            socket.getUsers(client,this.io);
             // get emited
             socket.message(client, this.io);
             // disconnect
-            socket.disconnect(client);
+            socket.disconnect(client, this.io);
         })
     }
 

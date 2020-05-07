@@ -29,7 +29,7 @@ export class UsersList {
 
     // get list of the user
     public getList() {
-        return this.list;
+        return this.list.filter(usr => usr.name !== 'no-name')
     }
 
     // get user from the list
