@@ -30,11 +30,13 @@ export default  class Server {
         console.log('listen connection');
 
         this.io.on('connect',(client:Socket) => {
-            console.log('client connented')
            
+            // connecting user
+            socket.connectingUser(client);
+            // get user
+            socket.setUsers(client, this.io);
             // get emited
             socket.message(client, this.io);
-
             // disconnect
             socket.disconnect(client);
         })
